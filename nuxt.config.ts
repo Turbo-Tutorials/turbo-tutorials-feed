@@ -6,7 +6,7 @@ export default defineNuxtConfig({
       contentfulSpaceId: process.env.CONTENTFUL_SPACE_ID,
       contentfulDeliveryApiKey: process.env.CONTENTFUL_DELIVERY_API_KEY,
       contentfulEnvironment: process.env.CONTENTFUL_ENVIRONMENT,
-      hostname: "https://turbo-tutorials-feed.vercel.app"
+      hostname: "https://turbo-tutorials-feed.netlify.app"
     },
   },
 })
