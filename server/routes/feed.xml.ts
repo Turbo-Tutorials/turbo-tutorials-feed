@@ -42,7 +42,7 @@ export default defineEventHandler(async (event) => {
   tutorials.forEach((tutorial: any) => {
     feed.item({
       title: tutorial.title ?? '-',
-      url: `${hostname}${tutorial.url}/`,
+      url: `https://turbo-tutorials.dev${tutorial.url}/`,
       date: tutorial.publicationDate,
       description: tutorial.description,
       categories: tutorial.categories,
@@ -51,8 +51,10 @@ export default defineEventHandler(async (event) => {
         { 'g:id': tutorial.id },
         { 'g:image_link': tutorial.image },
         { 'g:price': 0 },
+        { 'g:google_product_category': '5032' },
         { complexity: tutorial.complexity },
-        { link: `${hostname}${tutorial.url}/` },
+        { link: `https://turbo-tutorials.dev${tutorial.url}/` },
+        { tags: tutorial.categories.toString() }
       ]
     });
   });
