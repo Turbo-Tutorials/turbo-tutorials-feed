@@ -1,8 +1,7 @@
 import RSS from 'rss';
-import { getContentfulClient, enhanceContentfulItem } from "../../helpers"
+import { request, gql } from "graphql-request";
 
 export default defineEventHandler(async (event) => {
-
   const {
     public: { hostname },
   } = useRuntimeConfig();
@@ -20,22 +19,41 @@ export default defineEventHandler(async (event) => {
     },
   });
 
-  const ctfClient = getContentfulClient();
-  const tutorialData = await ctfClient.getEntries({
-    content_type: "turboTutorial",
-  });
+  const query = gql`
+    query TurboTutorials {
+      turboTutorials {
+        id
+        slug
+        title
+        publicationDate
+        description
+        githubLink
+        complexity
+        videoId
+        poster {
+          fileName
+          url
+        }
+        tags {
+          name
+        }
+        transcript
+      }
+    }`
 
-  const tutorials = tutorialData.items.map((tut: any) => {
-    const tutorial = enhanceContentfulItem(tut)
+  const tutorialData: any = await request('https://eu-central-1-shared-euc1-02.cdn.hygraph.com/content/clifk2kla052e01ui88kyhe0c/master', query);
+
+  const tutorials = tutorialData.turboTutorials.map((tut: any) => {
     return {
-      url: `/tutorials/${tutorial.slug}`,
-      title: tutorial.title,
-      date: tutorial.publicationDate,
-      description: tutorial.description,
-      categories: tutorial.tags,
-      complexity: tutorial.complexity,
-      id: tutorial.videoId,
-      image: tutorial.poster.src
+      id: tut.videoId,
+      url: `/tutorials/${tut.slug}`,
+      title: tut.title,
+      date: tut.publicationDate,
+      description: tut.description,
+      categories: tut.tags.map((tag: any) => { return tag.name }),
+      complexity: tut.complexity,
+      transcript: tut.transcript,
+      image: tut.poster.url
     }
   })
 
@@ -54,7 +72,9 @@ export default defineEventHandler(async (event) => {
         { 'g:google_product_category': '5032' },
         { complexity: tutorial.complexity },
         { link: `https://turbo-tutorials.dev${tutorial.url}/` },
-        { tags: tutorial.categories.toString() }
+        { tags: tutorial.categories.toString() },
+        { transcript: tutorial.transcript },
+        { githublink: tutorial.githubLink },
       ]
     });
   });
