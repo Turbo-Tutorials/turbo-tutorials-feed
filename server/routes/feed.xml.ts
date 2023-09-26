@@ -53,7 +53,8 @@ export default defineEventHandler(async (event) => {
       categories: tut.tags.map((tag: any) => { return tag.name }),
       complexity: tut.complexity,
       transcript: tut.transcript,
-      image: tut.poster.url
+      image: tut.poster.url,
+      githublink: tut.githublink,
     }
   })
 
